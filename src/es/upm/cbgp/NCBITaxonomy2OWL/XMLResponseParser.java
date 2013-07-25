@@ -17,6 +17,7 @@ import org.xml.sax.SAXParseException;
 public class XMLResponseParser {
 	/**
 	 * @param uri RESTful Search URI for BioPortal web services
+	 * Example taken from https://bmir-gforge.stanford.edu/gf/project/client_examples/scmsvn/?action=browse&path=%2Ftrunk%2FJava%2FListOntologies-Java%2Fsrc%2FParseXMLResponse.java&view=markup
 	 */
 	static String lastTaxonID = null;
 

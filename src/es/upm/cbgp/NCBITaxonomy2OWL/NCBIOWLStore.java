@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.io.RDFXMLOntologyFormat;
+import org.semanticweb.owlapi.io.SystemOutDocumentTarget;
 import org.semanticweb.owlapi.model.AddAxiom;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
@@ -33,6 +34,9 @@ public class NCBIOWLStore {
 		RDFXMLOntologyFormat rdfxmlformat = new RDFXMLOntologyFormat();
 		manager.saveOntology(ontology,rdfxmlformat, IRI.create(out_owl_file.toURI()));
 	}
+	public void writeModel() throws OWLOntologyStorageException{
+		manager.saveOntology(ontology, new RDFXMLOntologyFormat(), new SystemOutDocumentTarget());
+	}
 	public void addTaxon(String childFullID, String parentFullID){
 		OWLClass taxonOWLClass = factory.getOWLClass(IRI.create(childFullID));
 		OWLClass taxonParentOWLClass = factory.getOWLClass(IRI.create(parentFullID));
@@ -44,21 +48,19 @@ public class NCBIOWLStore {
 		OWLAnnotation labelAnno = factory.getOWLAnnotation(
 				factory.getRDFSLabel(),
 				factory.getOWLLiteral(label, "en"));
-		OWLClass cls = factory.getOWLClass(IRI.create(taxonFullId));
-		OWLAxiom ax = factory.getOWLAnnotationAssertionAxiom(cls.getIRI(), labelAnno);
+		OWLAxiom ax = factory.getOWLAnnotationAssertionAxiom(IRI.create(taxonFullId), labelAnno);
 		manager.applyChange(new AddAxiom(ontology, ax));
 	}
-	public void addAnnotationAddedByNCBI2OWL(String taxonFullId){
+	public void addComment (String taxonFullId, String comment){
 		OWLAnnotation labelAnno = factory.getOWLAnnotation(
-				factory.getRDFSLabel(),
-				factory.getOWLLiteral("AddedByNCBI2OWL", "en"));
-		OWLClass cls = factory.getOWLClass(IRI.create(taxonFullId));
-		OWLAxiom ax = factory.getOWLAnnotationAssertionAxiom(cls.getIRI(), labelAnno);
+				factory.getRDFSComment(),
+				factory.getOWLLiteral(comment, "en"));
+		OWLAxiom ax = factory.getOWLAnnotationAssertionAxiom(IRI.create(taxonFullId), labelAnno);
 		manager.applyChange(new AddAxiom(ontology, ax));
 	}
 	public boolean termExists(String fullId){
-		System.out.println(fullId);
-		System.out.println(ontology.containsClassInSignature(IRI.create(fullId)));
+//		System.out.println(fullId);
+//		System.out.println(ontology.containsClassInSignature(IRI.create(fullId)));
 		return ontology.containsClassInSignature(IRI.create(fullId));
 	}
 }
